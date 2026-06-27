@@ -1,0 +1,184 @@
+@model List<CellModel>
+
+@{
+    ViewData["Title"] = "Minesweeper Board";
+    int boardSize = (int)(ViewBag.BoardSize ?? 8);
+    string difficulty = (string)(ViewBag.Difficulty ?? "Easy");
+    
+    // Calculate cell size based on board dimensions
+    // 8x8: 38px, 10x10: 30px, 12x12: 25px
+    string cellSize = boardSize == 8 ? "38px" : boardSize == 10 ? "30px" : "25px";
+    string gridCols = $"repeat({boardSize}, {cellSize})";
+}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 8px;">
+    <div class="card shadow-lg" style="width: 100%; max-width: 650px;">
+        <div class="card-body p-2" style="padding-top: 12px !important; padding-bottom: 12px !important;">
+            <!-- Header -->
+            <h1 class="text-center mb-0" style="color: #333; font-weight: bold; font-size: 1.6em;">Minesweeper</h1>
+            <p class="text-center text-muted mb-2" style="font-size: 0.85em;">
+                @boardSize × @boardSize Board · <strong>@difficulty</strong> Difficulty
+            </p>
+            
+            <!-- Game Stats Bar -->
+            <div class="row mb-2 g-1">
+                <div class="col-4">
+                    <div class="text-center p-1" style="background-color: #f8f9fa; border-radius: 3px; border: 1px solid #dee2e6;">
+                        <p class="text-muted mb-0" style="font-size: 0.65em; margin-bottom: -2px;">⚐ Flags</p>
+                        <h6 class="mb-0" id="flagCount" style="color: #dc3545; font-size: 0.9em;">0</h6>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-1" style="background-color: #f8f9fa; border-radius: 3px; border: 1px solid #dee2e6;">
+                        <p class="text-muted mb-0" style="font-size: 0.65em; margin-bottom: -2px;">⏱️ Time</p>
+                        <h6 class="mb-0" id="timeElapsed" style="color: #0d6efd; font-size: 0.9em;">0:00</h6>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center p-1" style="background-color: #f8f9fa; border-radius: 3px; border: 1px solid #dee2e6;">
+                        <p class="text-muted mb-0" style="font-size: 0.65em; margin-bottom: -2px;">💣 Mines</p>
+                        <h6 class="mb-0" id="mineCount" style="color: #198754; font-size: 0.9em;">0</h6>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Board Grid - Following ButtonGrid Activity Pattern -->
+            <div class="d-flex justify-content-center mb-2">
+                <div id="gameBoard" class="minesweeper-grid" style="display: grid; grid-template-columns: @(gridCols); gap: 3px; padding: 6px; background-color: #c0c0c0; border: 3px solid; border-color: #dfdfdf #808080 #808080 #dfdfdf; box-shadow: inset 1px 1px 0 rgba(255,255,255,0.5), inset -1px -1px 0 rgba(0,0,0,0.5);">
+                    @{
+                        // Display cells using for loop (ButtonGrid pattern)
+                        for (int i = 0; i < Model.Count; i++)
+                        {
+                            var cell = Model.ElementAt(i);
+                            
+                            <div style="display: flex; justify-content: center;">
+                                <button type="button" 
+                                        class="cell-button" 
+                                        data-id="@cell.Id" 
+                                        style="width: @(cellSize); height: @(cellSize); padding: 0; border: none; background: none; cursor: pointer;">
+                                    <img src="~/img/@cell.CellImage" 
+                                         alt="Cell @cell.Id" 
+                                         style="width: @(cellSize); height: @(cellSize);" />
+                                    <!-- TODO MILESTONE 2: Handle cell click to reveal/flag -->
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            
+            <!-- Control Buttons -->
+            <div class="row g-1">
+                <div class="col-6">
+                    <button type="button" class="btn btn-warning btn-sm w-100" style="font-weight: bold; font-size: 0.85em; padding: 0.35rem 0.5rem;">
+                        🔄 New Game
+                    </button>
+                </div>
+                <div class="col-6">
+                    <a href="@Url.Action("StartGame", "Games")" class="btn btn-outline-secondary btn-sm w-100" style="font-weight: bold; font-size: 0.85em; padding: 0.35rem 0.5rem;">
+                        ← Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .min-vh-100 {
+        min-height: 100vh;
+    }
+    
+    /* Hidden Cell (Unrevealed) */
+    .cell-hidden {
+        background-color: #c0c0c0;
+        border-color: #dfdfdf #808080 #808080 #dfdfdf;
+    }
+    
+    .cell-hidden:hover {
+        background-color: #d0d0d0;
+        border-color: #dfdfdf #707070 #707070 #dfdfdf;
+    }
+    
+    .cell-hidden:active {
+        border-color: #808080 #dfdfdf #dfdfdf #808080;
+        background-color: #a0a0a0;
+    }
+    
+    /* Revealed Cell (Empty or with number) */
+    .cell-revealed {
+        background-color: #c0c0c0;
+        border-color: #808080 #dfdfdf #dfdfdf #808080;
+        cursor: default;
+    }
+    
+    .cell-revealed:hover {
+        background-color: #c0c0c0;
+    }
+    
+    /* Number Cell Styling */
+    .cell-number {
+        background-color: #c0c0c0;
+        border-color: #808080 #dfdfdf #dfdfdf #808080;
+        font-weight: bold;
+    }
+    
+    /* Number colors (classic Minesweeper) */
+    .number-1 { color: #0000ff; }
+    .number-2 { color: #008000; }
+    .number-3 { color: #ff0000; }
+    .number-4 { color: #000080; }
+    .number-5 { color: #800000; }
+    .number-6 { color: #008080; }
+    .number-7 { color: #000000; }
+    .number-8 { color: #808080; }
+    
+    /* Flagged Cell */
+    .cell-flagged {
+        background-color: #c0c0c0;
+        border-color: #dfdfdf #808080 #808080 #dfdfdf;
+        color: #ff0000;
+        font-size: 18px;
+    }
+    
+    .cell-flagged:hover {
+        background-color: #d0d0d0;
+    }
+    
+    /* Mine Cell (Revealed) */
+    .cell-mine {
+        background-color: #ff6b6b;
+        border-color: #808080 #dfdfdf #dfdfdf #808080;
+        color: #000;
+        font-size: 16px;
+    }
+    
+    .cell-mine:hover {
+        background-color: #ff5252;
+    }
+    
+    /* Base cell button styles */
+    .cell-button {
+        transition: none;
+    }
+    
+    .cell-button:hover {
+        background-color: #e0e0e0;
+        border-color: #dfdfdf #606060 #606060 #dfdfdf;
+    }
+    
+    .cell-button:active {
+        border-color: #808080 #dfdfdf #dfdfdf #808080;
+        background-color: #a0a0a0;
+    }
+    
+    .cell-button:disabled {
+        cursor: not-allowed;
+        color: #333;
+    }
+    
+    .minesweeper-grid button {
+        transition: none;
+    }
+</style>
+

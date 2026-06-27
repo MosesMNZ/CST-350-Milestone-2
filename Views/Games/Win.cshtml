@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "You Won!";
+}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
+    <div class="card shadow-lg" style="width: 100%; max-width: 500px;">
+        <div class="card-body p-5 text-center">
+            <!-- Victory Icon -->
+            <div style="font-size: 80px; margin-bottom: 20px;">
+                🎉
+            </div>
+            
+            <!-- Main Message -->
+            <h1 class="card-title mb-2" style="color: #28a745; font-weight: bold; font-size: 2.5em;">
+                Congratulations!
+            </h1>
+            <p class="card-text mb-4" style="color: #555; font-size: 1.2em;">
+                You won the game! 🏆
+            </p>
+            
+            <!-- Stats Card -->
+            <div class="card mb-4" style="border: 2px solid #28a745; background-color: #f8f9fa;">
+                <div class="card-body">
+                    <h5 class="card-title mb-3" style="color: #333;">Game Statistics</h5>
+                    
+                    <!-- Final Score -->
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1">Final Score</p>
+                        <!-- TODO MILESTONE 2: Calculate score from board and time -->
+                        <h4 class="mb-0" style="color: #0d6efd; font-weight: bold;">
+                            <span id="finalScore">0</span> Points
+                        </h4>
+                    </div>
+                    
+                    <!-- Time Elapsed -->
+                    <div>
+                        <p class="text-muted small mb-1">Time Elapsed</p>
+                        <!-- TODO MILESTONE 2: Get time from session -->
+                        <h4 class="mb-0" style="color: #28a745; font-weight: bold;">
+                            <span id="timeElapsed">0:00</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Stats -->
+            <div class="row g-2 mb-4">
+                <div class="col-6">
+                    <div style="background-color: #f0f7ff; padding: 15px; border-radius: 4px; border-left: 4px solid #0d6efd;">
+                        <p class="text-muted small mb-1">Board Size</p>
+                        <!-- TODO MILESTONE 2: Display board size from ViewBag -->
+                        <h6 class="mb-0" style="color: #0d6efd; font-weight: bold;">
+                            <span id="boardSize">8</span> × <span id="boardSizeY">8</span>
+                        </h6>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div style="background-color: #f0fff4; padding: 15px; border-radius: 4px; border-left: 4px solid #28a745;">
+                        <p class="text-muted small mb-1">Difficulty</p>
+                        <!-- TODO MILESTONE 2: Display difficulty from ViewBag -->
+                        <h6 class="mb-0" style="color: #28a745; font-weight: bold;">
+                            <span id="difficulty">Easy</span>
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-success btn-lg" style="font-weight: bold; font-size: 1.1em;">
+                    <!-- TODO MILESTONE 2: Implement play again functionality -->
+                    🎮 Play Again
+                </button>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg" style="font-weight: bold; font-size: 1.1em;">
+                    🏠 Return Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .min-vh-100 {
+        min-height: 100vh;
+    }
+</style>

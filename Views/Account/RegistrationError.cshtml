@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Registration Error";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h4 class="alert-heading">Registration Failed!</h4>
+                <p>@ViewBag.ErrorMessage</p>
+                <hr />
+                <p class="mb-0">Please try again or contact support if the problem persists.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">What went wrong?</h5>
+                    <ul>
+                        <li>Your registration information may be incomplete</li>
+                        <li>The email or username might already be registered</li>
+                        <li>There may be a temporary server issue</li>
+                    </ul>
+
+                    <div class="mt-4">
+                        <a href="@Url.Action("Register", "Account")" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Registration
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

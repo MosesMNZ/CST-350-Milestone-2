@@ -1,0 +1,55 @@
+@model GameSettingsModel
+
+@{
+    ViewData["Title"] = "Start Game - Minesweeper";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Start New Game</h1>
+
+                    <form method="post" action="@Url.Action("StartGame", "Games")">
+                        <!-- Board Size Selection -->
+                        <div class="mb-4">
+                            <label asp-for="BoardSize" class="form-label fw-bold"></label>
+                            <select asp-for="BoardSize" class="form-select form-select-lg">
+                                <option value="" selected disabled>Select board size...</option>
+                                <option value="8">8x8 Board (64 cells)</option>
+                                <option value="10">10x10 Board (100 cells)</option>
+                                <option value="12">12x12 Board (144 cells)</option>
+                            </select>
+                            <small class="text-muted d-block mt-1">Choose board dimensions</small>
+                            <span asp-validation-for="BoardSize" class="text-danger"></span>
+                        </div>
+
+                        <!-- Difficulty Selection -->
+                        <div class="mb-4">
+                            <label asp-for="Difficulty" class="form-label fw-bold"></label>
+                            <select asp-for="Difficulty" class="form-select form-select-lg">
+                                <option value="" selected disabled>Select difficulty...</option>
+                                <option value="Easy">Easy - Fewer mines</option>
+                                <option value="Medium">Medium - Balanced</option>
+                                <option value="Hard">Hard - Many mines</option>
+                            </select>
+                            <small class="text-muted d-block mt-1">Higher difficulty has more mines</small>
+                            <span asp-validation-for="Difficulty" class="text-danger"></span>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-play-fill"></i> Start Game
+                            </button>
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

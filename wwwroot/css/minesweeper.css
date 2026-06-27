@@ -1,0 +1,415 @@
+/* ================================================
+   Minesweeper Board CSS
+   Professional Minesweeper game board styling
+   ================================================ */
+
+/* ================================================
+   Main Container & Layout
+   ================================================ */
+
+.minesweeper-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.minesweeper-card {
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ================================================
+   Game Board Grid
+   ================================================ */
+
+.minesweeper-grid {
+    display: grid;
+    gap: 2px;
+    padding: 8px;
+    background-color: #c0c0c0;
+    border: 3px solid;
+    border-color: #dfdfdf #808080 #808080 #dfdfdf;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+                inset -1px -1px 0 rgba(0, 0, 0, 0.5);
+    margin: 0 auto;
+    width: fit-content;
+}
+
+/* Grid responsive sizing with fixed cell sizes */
+.grid-8x8 {
+    grid-template-columns: repeat(8, 40px);
+}
+
+.grid-10x10 {
+    grid-template-columns: repeat(10, 32px);
+}
+
+.grid-12x12 {
+    grid-template-columns: repeat(12, 26px);
+}
+
+/* ================================================
+   Cell Button Base Styles
+   ================================================ */
+
+.cell-button {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: none;
+    background-clip: padding-box;
+    background-color: transparent;
+}
+
+.cell-button:focus {
+    outline: none;
+}
+
+.cell-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ================================================
+   Hidden Cell State (Unrevealed)
+   ================================================ */
+
+.cell-hidden {
+    background-color: #c0c0c0;
+    border-color: #dfdfdf #808080 #808080 #dfdfdf;
+    color: #333;
+}
+
+.cell-hidden:hover {
+    background-color: #d0d0d0;
+    border-color: #dfdfdf #707070 #707070 #dfdfdf;
+}
+
+.cell-hidden:active {
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    background-color: #a0a0a0;
+}
+
+/* ================================================
+   Revealed Cell State (Empty)
+   ================================================ */
+
+.cell-revealed {
+    background-color: #c0c0c0;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    color: #333;
+    cursor: default;
+}
+
+.cell-revealed:hover {
+    background-color: #c0c0c0;
+}
+
+/* ================================================
+   Number Cell State (1-8 adjacent mines)
+   ================================================ */
+
+.cell-number {
+    background-color: #c0c0c0;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    font-weight: bold;
+    cursor: default;
+}
+
+/* Number color scheme (classic Minesweeper) */
+.number-1 {
+    color: #0000ff; /* Blue */
+}
+
+.number-2 {
+    color: #008000; /* Green */
+}
+
+.number-3 {
+    color: #ff0000; /* Red */
+}
+
+.number-4 {
+    color: #000080; /* Dark Blue */
+}
+
+.number-5 {
+    color: #800000; /* Maroon */
+}
+
+.number-6 {
+    color: #008080; /* Teal */
+}
+
+.number-7 {
+    color: #000000; /* Black */
+}
+
+.number-8 {
+    color: #808080; /* Gray */
+}
+
+/* ================================================
+   Flagged Cell State
+   ================================================ */
+
+.cell-flagged {
+    background-color: #c0c0c0;
+    border-color: #dfdfdf #808080 #808080 #dfdfdf;
+    color: #ff0000;
+    font-size: 18px;
+}
+
+.cell-flagged:hover {
+    background-color: #d0d0d0;
+    border-color: #dfdfdf #707070 #707070 #dfdfdf;
+}
+
+.cell-flagged:active {
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    background-color: #a0a0a0;
+}
+
+/* ================================================
+   Mine Cell State (Revealed - Game Over)
+   ================================================ */
+
+.cell-mine {
+    background-color: #ff6b6b;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    color: #000;
+    font-size: 16px;
+    cursor: default;
+}
+
+.cell-mine:hover {
+    background-color: #ff5252;
+}
+
+/* ================================================
+   Disabled Cell (End of game)
+   ================================================ */
+
+.cell-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* ================================================
+   Stats Bar Container
+   ================================================ */
+
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid;
+}
+
+.stat-box-flags {
+    background-color: #f0f7ff;
+    border-left-color: #dc3545;
+}
+
+.stat-box-time {
+    background-color: #f0f7ff;
+    border-left-color: #0d6efd;
+}
+
+.stat-box-mines {
+    background-color: #f0fff4;
+    border-left-color: #198754;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ================================================
+   Responsive Design
+   ================================================ */
+
+/* Small screens (mobile) */
+@media (max-width: 576px) {
+    .minesweeper-container {
+        padding: 10px;
+    }
+    
+    .minesweeper-card {
+        max-width: 100%;
+    }
+    
+    .cell-button {
+        font-size: 12px;
+    }
+    
+    .grid-12x12 {
+        grid-template-columns: repeat(8, 1fr);
+        gap: 2px;
+    }
+}
+
+/* Medium screens (tablet) */
+@media (min-width: 576px) and (max-width: 768px) {
+    .minesweeper-card {
+        max-width: 500px;
+    }
+    
+    .cell-button {
+        font-size: 13px;
+    }
+}
+
+/* Large screens (desktop) */
+@media (min-width: 992px) {
+    .minesweeper-card {
+        max-width: 600px;
+    }
+}
+
+/* ================================================
+   Button Animations & Transitions
+   ================================================ */
+
+.cell-button {
+    transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+/* Disable transitions for grid to maintain performance */
+.minesweeper-grid button {
+    transition: none;
+}
+
+/* ================================================
+   Utility Classes
+   ================================================ */
+
+.text-center-custom {
+    text-align: center;
+}
+
+.mt-custom-lg {
+    margin-top: 32px;
+}
+
+.mb-custom-lg {
+    margin-bottom: 32px;
+}
+
+.py-custom-lg {
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+/* ================================================
+   Victory/Defeat Screen Styling
+   ================================================ */
+
+.game-result-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.game-result-card {
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.result-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.result-title {
+    font-weight: bold;
+    font-size: 2.5em;
+    margin-bottom: 16px;
+}
+
+.result-subtitle {
+    color: #555;
+    font-size: 1.2em;
+    margin-bottom: 24px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    padding: 15px;
+    border-radius: 4px;
+    text-align: center;
+    border-left: 4px solid;
+}
+
+/* ================================================
+   Accessibility
+   ================================================ */
+
+.cell-button:focus-visible {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+    .cell-button {
+        border-width: 3px;
+    }
+    
+    .minesweeper-grid {
+        border-width: 4px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .cell-button {
+        transition: none;
+    }
+    
+    .minesweeper-container {
+        animation: none;
+    }
+}

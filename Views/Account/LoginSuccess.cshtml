@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Login Successful";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="alert alert-success" role="alert">
+                <h4 class="alert-heading">Success!</h4>
+                <p>You have been logged in successfully.</p>
+                <hr />
+                <p class="mb-0">Welcome back! You can now access your account.</p>
+            </div>
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Return to Home</a>
+            </div>
+        </div>
+    </div>
+</div>

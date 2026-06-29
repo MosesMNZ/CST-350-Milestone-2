@@ -25,6 +25,16 @@ namespace CST_350_Milestone.Models
             _passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
         }
 
+        public string GetPasswordHash()
+        {
+            return _passwordHash;
+        }
+
+        public void SetPasswordHash(string hash)
+        {
+            _passwordHash = hash;
+        }
+
         public bool VerifyPassword(string password)
         {
             return BCrypt.Net.BCrypt.Verify(password, _passwordHash);

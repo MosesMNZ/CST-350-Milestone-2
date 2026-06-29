@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.DataProtection;
+
 namespace CST_350_Milestone
 {
     public class Program
@@ -15,6 +17,10 @@ namespace CST_350_Milestone
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "DataProtection-Keys")))
+                .SetApplicationName("CST-350-Milestone");
 
             var app = builder.Build();
 

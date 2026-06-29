@@ -1,0 +1,106 @@
+@model ProfileModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+    <div class="col-md-6 col-sm-10 col-11">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">My Profile</h5>
+            </div>
+            <div class="card-body py-2 px-3">
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger py-2 mb-2">
+                        <ul class="mb-0 small">
+                            @foreach (var entry in ViewData.ModelState.Values)
+                            {
+                                foreach (var error in entry.Errors)
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form method="post" asp-action="Profile" asp-controller="Account">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="FirstName" class="form-label small mb-0">First Name</label>
+                            <input asp-for="FirstName" class="form-control form-control-sm" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="LastName" class="form-label small mb-0">Last Name</label>
+                            <input asp-for="LastName" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="Sex" class="form-label small mb-0">Sex</label>
+                            <select asp-for="Sex" class="form-select form-select-sm">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="Age" class="form-label small mb-0">Age</label>
+                            <input asp-for="Age" type="number" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label asp-for="State" class="form-label small mb-0">State</label>
+                        <input asp-for="State" class="form-control form-control-sm" />
+                    </div>
+                    <div class="mb-2">
+                        <label asp-for="Email" class="form-label small mb-0">Email</label>
+                        <input asp-for="Email" type="email" class="form-control form-control-sm" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label small mb-0">Username</label>
+                        <input asp-for="Username" class="form-control form-control-sm" />
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">✅ Updates Complete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Your profile has been updated successfully.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["UpdateSuccess"] != null)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new bootstrap.Modal(document.getElementById('successModal')).show();
+        });
+    </script>
+}
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

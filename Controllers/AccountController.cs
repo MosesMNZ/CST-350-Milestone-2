@@ -6,6 +6,13 @@ namespace CST_350_Milestone.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly string _connStr;
+
+        public AccountController(IConfiguration config)
+        {
+            _connStr = config.GetConnectionString("DefaultConnection");
+        }
+
         public IActionResult Register()
         {
             return View();
@@ -16,21 +23,22 @@ namespace CST_350_Milestone.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                UserModel user = new UserModel
                 {
-                    // Hash the password using BCrypt
-                    model.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
-                    
-                    // TODO: Add database functionality to save user registration
-                    // If database save fails, redirect to error page
-                    
-                    return RedirectToAction("RegistrationSuccess");
-                }
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = "Registration failed: " + ex.Message;
-                    return RedirectToAction("RegistrationError");
-                }
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Sex = model.Sex,
+                    Age = model.Age,
+                    State = model.State,
+                    Email = model.Email,
+                    Username = model.Username,
+                };
+                user.SetPassword(model.Password);
+
+                UserDAO dao = new UserDAO(_connStr);
+                dao.AddUser(user);
+
+                return RedirectToAction("RegistrationSuccess");
             }
 
             return View(model);
@@ -57,34 +65,25 @@ namespace CST_350_Milestone.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                UserDAO dao = new UserDAO(_connStr);
+
+                UserModel user = dao.GetUser(model.Username, model.Password);
+
+                if (user != null)
                 {
-                    // TODO: Add database authentication functionality
-                    // Example: Verify password using BCrypt
-                    // string storedHash = /* get from database */;
-                    // bool isValid = BCrypt.Net.BCrypt.Verify(model.Password, storedHash);
-                    
-                    // Placeholder validation - replace with actual database check
-                    if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
-                    {
-                        TempData["ErrorMessage"] = "Invalid username or password.";
-                        return RedirectToAction("LoginError");
-                    }
-                    
-                    // Set session variable to mark user as authenticated
-                    HttpContext.Session.SetString("UserAuthenticated", "true");
-                    HttpContext.Session.SetString("Username", model.Username);
+                    HttpContext.Session.SetString("User", user.Username);
+                    HttpContext.Session.SetString("FirstName", user.FirstName);
+
                     return RedirectToAction("LoginSuccess");
                 }
-                catch (Exception ex)
+                else
                 {
-                    TempData["ErrorMessage"] = "Login failed: " + ex.Message;
-                    return RedirectToAction("LoginError");
+                    ModelState.AddModelError(string.Empty, "Invalid username or password.");
                 }
             }
-
             return View(model);
         }
+
 
         public IActionResult LoginSuccess()
         {
@@ -95,6 +94,75 @@ namespace CST_350_Milestone.Controllers
         {
             ViewBag.ErrorMessage = TempData["ErrorMessage"] ?? "Invalid login credentials.";
             return View();
+        }
+
+        public IActionResult Profile()
+        {
+            var username = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(username))
+                return RedirectToAction("Login");
+
+            UserDAO dao = new UserDAO(_connStr);
+            UserModel user = dao.GetUserByUsername(username);
+
+            var model = new ProfileModel
+            {
+                FirstName = user.FirstName,
+                LastName  = user.LastName,
+                Sex       = user.Sex,
+                Age       = user.Age,
+                State     = user.State,
+                Email     = user.Email,
+                Username  = user.Username,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Profile(ProfileModel model)
+        {
+            var username = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(username))
+                return RedirectToAction("Login");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    UserDAO dao = new UserDAO(_connStr);
+                    UserModel user = dao.GetUserByUsername(username);
+
+                    user.FirstName = model.FirstName;
+                    user.LastName  = model.LastName;
+                    user.Sex       = model.Sex;
+                    user.Age       = model.Age;
+                    user.State     = model.State;
+                    user.Email     = model.Email;
+                    user.Username  = model.Username;
+
+                    dao.UpdateUser(user);
+
+                    // Keep session in sync
+                    HttpContext.Session.SetString("User",      model.Username);
+                    HttpContext.Session.SetString("FirstName", model.FirstName);
+
+                    TempData["UpdateSuccess"] = true;
+                    return RedirectToAction("Profile");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Update failed: " + ex.Message);
+                }
+            }
+
+            return View(model);
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

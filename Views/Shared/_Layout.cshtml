@@ -7,40 +7,55 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CST_350_Milestone.styles.css" asp-append-version="true" />
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { display: flex; flex-direction: column; }
+        header { flex-shrink: 0; }
+        #main-area { flex: 1; min-height: 0; overflow-y: auto; }
+        #main-area > main { height: 100%; }
+        footer { flex-shrink: 0; }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-0 position-relative">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CST_350_Milestone</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Games" asp-action="StartGame">Start Game</a>
-                        </li>
-                    </ul>
+                <!-- Left: Hello -->
+                @if (Context.Session.GetString("User") != null)
+                {
+                    <a class="navbar-text text-dark fw-semibold text-decoration-none" asp-controller="Account" asp-action="Profile">Hello, @Context.Session.GetString("FirstName")</a>
+                }
+                else
+                {
+                    <span></span>
+                }
+
+                <!-- Center: absolutely anchored to the middle -->
+                @if (Context.Session.GetString("User") != null)
+                {
+                    <a class="navbar-brand position-absolute start-50 translate-middle-x mb-0" asp-area="" asp-controller="Games" asp-action="StartGame">Milestone Minesweeper</a>
+                }
+                else
+                {
+                    <a class="navbar-brand position-absolute start-50 translate-middle-x mb-0" asp-area="" asp-controller="Account" asp-action="Login">Milestone Minesweeper</a>
+                }
+
+                <!-- Right: Logout or Login -->
+                <div class="ms-auto">
+                    @if (Context.Session.GetString("User") != null)
+                    {
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                    }
+                    else
+                    {
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                    }
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div id="main-area">
+        <main role="main">
             @RenderBody()
         </main>
     </div>

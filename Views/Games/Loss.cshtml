@@ -2,90 +2,68 @@
     ViewData["Title"] = "Game Over";
 }
 
-<div class="d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
-    <div class="card shadow-lg" style="width: 100%; max-width: 500px;">
-        <div class="card-body p-5 text-center">
+<div class="d-flex justify-content-center align-items-center" style="height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px;">
+    <div class="card shadow-lg" style="width: 100%; max-width: 480px;">
+        <div class="card-body p-4 text-center">
+
             <!-- Game Over Icon -->
-            <div style="font-size: 80px; margin-bottom: 20px;">
-                💣
-            </div>
-            
+            <div style="font-size: 48px; margin-bottom: 8px;">💣</div>
+
             <!-- Main Message -->
-            <h1 class="card-title mb-2" style="color: #dc3545; font-weight: bold; font-size: 2.5em;">
-                Game Over
-            </h1>
-            <p class="card-text mb-4" style="color: #555; font-size: 1.2em;">
-                You hit a mine! 💥
-            </p>
-            
-            <!-- Game Stats Card -->
-            <div class="card mb-4" style="border: 2px solid #dc3545; background-color: #f8f9fa;">
-                <div class="card-body">
-                    <h5 class="card-title mb-3" style="color: #333;">Game Statistics</h5>
-                    
-                    <!-- Time Played -->
-                    <div class="mb-3">
-                        <p class="text-muted small mb-1">⏱️ Time Played</p>
-                        <!-- TODO MILESTONE 2: Get time from session -->
-                        <h4 class="mb-0" style="color: #0d6efd; font-weight: bold;">
-                            <span id="timePlayed">0:00</span>
-                        </h4>
-                    </div>
-                    
-                    <!-- Cells Revealed -->
-                    <div>
-                        <p class="text-muted small mb-1">🔍 Cells Revealed</p>
-                        <!-- TODO MILESTONE 2: Calculate revealed cells from board state -->
-                        <h4 class="mb-0" style="color: #6c757d; font-weight: bold;">
-                            <span id="cellsRevealed">0</span> cells
-                        </h4>
+            <h1 class="card-title mb-1" style="color: #dc3545; font-weight: bold; font-size: 1.8em;">Game Over</h1>
+            <p class="card-text mb-3" style="color: #555; font-size: 1em;">You hit a mine! 💥</p>
+
+            <!-- Stats Card -->
+            <div class="card mb-3" style="border: 2px solid #dc3545; background-color: #f8f9fa;">
+                <div class="card-body py-2 px-3">
+                    <h6 class="card-title mb-2" style="color: #333;">Game Statistics</h6>
+                    <div class="d-flex justify-content-around">
+                        <div>
+                            <p class="text-muted mb-0" style="font-size: 0.75em;">⏱️ Time Played</p>
+                            @{
+                                int lossSecs = (int)(ViewBag.ElapsedSeconds ?? 0);
+                                int lossMins = lossSecs / 60;
+                                int lossRemSecs = lossSecs % 60;
+                            }
+                            <h5 class="mb-0" style="color: #0d6efd; font-weight: bold;">@(lossMins):@(lossRemSecs.ToString("D2"))</h5>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0" style="font-size: 0.75em;">🔍 Cells Revealed</p>
+                            <h5 class="mb-0" style="color: #6c757d; font-weight: bold;">@(ViewBag.CellsRevealed ?? 0)</h5>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Additional Stats -->
-            <div class="row g-2 mb-4">
+            <div class="row g-2 mb-3">
                 <div class="col-6">
-                    <div style="background-color: #f0f7ff; padding: 15px; border-radius: 4px; border-left: 4px solid #0d6efd;">
+                    <div style="background-color: #f0f7ff; padding: 10px; border-radius: 4px; border-left: 4px solid #0d6efd;">
                         <p class="text-muted small mb-1">Board Size</p>
-                        <!-- TODO MILESTONE 2: Display board size from ViewBag -->
-                        <h6 class="mb-0" style="color: #0d6efd; font-weight: bold;">
-                            <span id="boardSize">8</span> × <span id="boardSizeY">8</span>
-                        </h6>
+                        <h6 class="mb-0" style="color: #0d6efd; font-weight: bold;">@(ViewBag.BoardSize ?? 8) × @(ViewBag.BoardSize ?? 8)</h6>
                     </div>
                 </div>
                 <div class="col-6">
-                    <div style="background-color: #fff3cd; padding: 15px; border-radius: 4px; border-left: 4px solid #ffc107;">
+                    <div style="background-color: #fff3cd; padding: 10px; border-radius: 4px; border-left: 4px solid #ffc107;">
                         <p class="text-muted small mb-1">Difficulty</p>
-                        <!-- TODO MILESTONE 2: Display difficulty from ViewBag -->
-                        <h6 class="mb-0" style="color: #856404; font-weight: bold;">
-                            <span id="difficulty">Easy</span>
-                        </h6>
+                        <h6 class="mb-0" style="color: #856404; font-weight: bold;">@(ViewBag.Difficulty ?? "Easy")</h6>
                     </div>
                 </div>
             </div>
-            
-            <!-- Encouragement Message -->
-            <div class="alert alert-info mb-4" role="alert" style="border-radius: 4px;">
-                <p class="mb-0">Don't give up! Try again and be more careful next time. 🎯</p>
-            </div>
-            
+
+            <!-- Encouragement -->
+            <p class="text-muted mb-3" style="font-size: 0.85em;">Don't give up! Be more careful next time. 🎯</p>
+
             <!-- Action Buttons -->
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-danger btn-lg" style="font-weight: bold; font-size: 1.1em;">
-                    <!-- TODO MILESTONE 2: Implement try again functionality -->
+                <a href="@Url.Action("RestartGame", "Games")" class="btn btn-danger" style="font-weight: bold;">
                     🔄 Try Again
-                </button>
-                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg" style="font-weight: bold; font-size: 1.1em;">
-                    🏠 Return Home
+                </a>
+                <a href="@Url.Action("StartGame", "Games")" class="btn btn-outline-secondary" style="font-weight: bold;">
+                    🗂️ Change Board
                 </a>
             </div>
+
         </div>
     </div>
 </div>
-
-<style>
-    .min-vh-100 {
-        min-height: 100vh;
-    }
-</style>

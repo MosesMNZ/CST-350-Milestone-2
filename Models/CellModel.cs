@@ -16,6 +16,9 @@ namespace CST_350_Milestone.Models
             CellImage = cellImage;
         }
 
+        public bool IsMine { get; set; }
+        public int AdjacentMines { get; set; }
+
         public CellModel() { }
     }
 }

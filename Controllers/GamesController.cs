@@ -5,26 +5,11 @@ namespace CST_350_Milestone.Controllers
 {
     public class GamesController : Controller
     {
-        // Static list shared across requests
-        static List<CellModel> cells = new List<CellModel>();
-
-        public GamesController()
-        {
-            // Initialize cells only once
-            if (cells.Count == 0)
-            {
-                for (int i = 0; i < 64; i++)
-                {
-                    cells.Add(new CellModel(i, 0, "blue_button.png"));
-                }
-            }
-        }
         [HttpGet]
         public IActionResult StartGame()
         {
-            // Check authentication
-            var userAuthenticated = HttpContext.Session.GetString("UserAuthenticated");
-            if (string.IsNullOrEmpty(userAuthenticated) || userAuthenticated != "true")
+            var user = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(user))
                 return RedirectToAction("Login", "Account");
 
             return View(new GameSettingsModel());
@@ -33,68 +18,111 @@ namespace CST_350_Milestone.Controllers
         [HttpPost]
         public IActionResult StartGame(GameSettingsModel model)
         {
-            // Check authentication
-            var userAuthenticated = HttpContext.Session.GetString("UserAuthenticated");
-            if (string.IsNullOrEmpty(userAuthenticated) || userAuthenticated != "true")
+            var user = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(user))
                 return RedirectToAction("Login", "Account");
 
-            // Validate form data
             if (!ModelState.IsValid)
                 return View(model);
 
-            // TODO MILESTONE 2: Create Board object and place mines
-            // TODO MILESTONE 2: Store board in session
+            int boardSize = int.Parse(model.BoardSize);
+            var board = new BoardModel(boardSize, model.Difficulty);
+            HttpContext.Session.SetString("Board", board.ToJson());
 
-            return RedirectToAction("MineSweeperBoard", new { boardSize = model.BoardSize, difficulty = model.Difficulty });
+            return RedirectToAction("MineSweeperBoard");
         }
 
-        public IActionResult MineSweeperBoard(string boardSize, string difficulty)
+        public IActionResult MineSweeperBoard()
         {
-            // Check authentication
-            var userAuthenticated = HttpContext.Session.GetString("UserAuthenticated");
-            if (string.IsNullOrEmpty(userAuthenticated) || userAuthenticated != "true")
+            var user = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(user))
                 return RedirectToAction("Login", "Account");
 
-            // Create cells for selected board size
-            int boardDimension = int.Parse(boardSize);
-            int totalCells = boardDimension * boardDimension;
-            cells.Clear();
-            
-            for (int i = 0; i < totalCells; i++)
-            {
-                cells.Add(new CellModel(i, 0, "blue_button.png"));
-            }
+            var boardJson = HttpContext.Session.GetString("Board");
+            if (boardJson == null) return RedirectToAction("StartGame");
 
-            // TODO MILESTONE 2: Create Board object and retrieve from session
-            // TODO MILESTONE 2: Update cells with actual mine positions and adjacent counts
+            var board = BoardModel.FromJson(boardJson)!;
 
-            ViewBag.BoardSize = boardDimension;
-            ViewBag.Difficulty = difficulty;
-            return View(cells);
+            if (board.GameWon) return RedirectToAction("Win");
+            if (board.GameOver) return RedirectToAction("Loss");
+
+            ViewBag.BoardSize = board.Size;
+            ViewBag.Difficulty = board.Difficulty;
+            ViewBag.TotalMines = board.TotalMines;
+            ViewBag.ElapsedSeconds = board.GetElapsedSeconds();
+            return View(board.Cells);
+        }
+
+        [HttpPost]
+        public IActionResult RevealCell(int id)
+        {
+            var user = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(user))
+                return RedirectToAction("Login", "Account");
+
+            var boardJson = HttpContext.Session.GetString("Board");
+            if (boardJson == null) return RedirectToAction("StartGame");
+
+            var board = BoardModel.FromJson(boardJson)!;
+            board.RevealCell(id);
+            HttpContext.Session.SetString("Board", board.ToJson());
+
+            if (board.GameWon) return RedirectToAction("Win");
+            if (board.GameOver) return RedirectToAction("Loss");
+
+            return RedirectToAction("MineSweeperBoard");
+        }
+
+        public IActionResult RestartGame()
+        {
+            var user = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(user))
+                return RedirectToAction("Login", "Account");
+
+            var boardJson = HttpContext.Session.GetString("Board");
+            if (boardJson == null) return RedirectToAction("StartGame");
+
+            var old = BoardModel.FromJson(boardJson)!;
+            var board = new BoardModel(old.Size, old.Difficulty);
+            HttpContext.Session.SetString("Board", board.ToJson());
+
+            return RedirectToAction("MineSweeperBoard");
         }
 
         public IActionResult Win()
         {
-            // Check authentication
-            var userAuthenticated = HttpContext.Session.GetString("UserAuthenticated");
-            if (string.IsNullOrEmpty(userAuthenticated) || userAuthenticated != "true")
+            var user = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(user))
                 return RedirectToAction("Login", "Account");
 
-            // TODO MILESTONE 2: Retrieve game stats from session (time, cells revealed, score)
-            // TODO MILESTONE 2: Pass stats to view via ViewBag
+            var boardJson = HttpContext.Session.GetString("Board");
+            if (boardJson != null)
+            {
+                var board = BoardModel.FromJson(boardJson)!;
+                ViewBag.ElapsedSeconds = board.FinalElapsedSeconds;
+                ViewBag.Score = board.CalculateScore();
+                ViewBag.BoardSize = board.Size;
+                ViewBag.Difficulty = board.Difficulty;
+            }
 
             return View();
         }
 
         public IActionResult Loss()
         {
-            // Check authentication
-            var userAuthenticated = HttpContext.Session.GetString("UserAuthenticated");
-            if (string.IsNullOrEmpty(userAuthenticated) || userAuthenticated != "true")
+            var user = HttpContext.Session.GetString("User");
+            if (string.IsNullOrEmpty(user))
                 return RedirectToAction("Login", "Account");
 
-            // TODO MILESTONE 2: Retrieve game stats from session (time, cells revealed)
-            // TODO MILESTONE 2: Pass stats to view via ViewBag
+            var boardJson = HttpContext.Session.GetString("Board");
+            if (boardJson != null)
+            {
+                var board = BoardModel.FromJson(boardJson)!;
+                ViewBag.ElapsedSeconds = board.FinalElapsedSeconds;
+                ViewBag.CellsRevealed = board.RevealedCellCount;
+                ViewBag.BoardSize = board.Size;
+                ViewBag.Difficulty = board.Difficulty;
+            }
 
             return View();
         }
